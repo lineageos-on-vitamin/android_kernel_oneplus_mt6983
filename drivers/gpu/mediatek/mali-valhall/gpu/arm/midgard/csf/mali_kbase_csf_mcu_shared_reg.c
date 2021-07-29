@@ -96,7 +96,7 @@ static void notify_group_csg_reg_map_error(struct kbase_queue_group *group)
 	dev_err(kbdev->dev, "Fatal: group_%d_%d_%d exceeded shared region map retry limit",
 		group->kctx->tgid, group->kctx->id, group->handle);
 	kbase_csf_add_group_fatal_error(group, &err_payload);
-	kbase_event_wakeup(group->kctx);
+	kbase_event_wakeup_sync(group->kctx);
 }
 /* Replace the given phys at vpfn (reflecting a queue's userio_pages) mapping.
  * If phys is NULL, the internal dummy_phys is used, which effectively
