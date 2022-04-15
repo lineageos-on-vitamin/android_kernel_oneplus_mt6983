@@ -35,7 +35,7 @@
 #include "mtk_drm_trace.h"
 #include <linux/leds-mtk.h>
 #endif /* OPLUS_FEATURE_DISPLAY_APOLLO */
-
+#include "../../../../vendor/oplus/kernel/touchpanel/oplus_touchscreen_v2/touchpanel_notify/touchpanel_event_notify.h"
 
 /*
  * we will create a sysfs which called /sys/kernel/oplus_display,
@@ -133,6 +133,7 @@ extern int oplus_mtk_drm_setcabc(struct drm_crtc *crtc, unsigned int hbm_mode);
 //extern int oplus_mtk_drm_setcabc(struct drm_crtc *crtc, unsigned int hbm_mode);
 extern int oplus_display_get_softiris_color_status(void *buf);
 
+struct touchpanel_event fp_state = {0};
 
 /*#ifdef OPLUS_BUG_STABILITY*/
 static BLOCKING_NOTIFIER_HEAD(lcdinfo_notifiers);
@@ -1527,6 +1528,13 @@ static ssize_t oplus_display_set_dim_dc_alpha(struct kobject *dev,
 	return count;
 }
 
+static ssize_t oplus_display_get_fp_state(struct kobject *obj,
+	struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d,%d,%d\n", fp_state.x, fp_state.y, fp_state.touch_state);
+
+}
+
 static struct kobject *oplus_display_kobj;
 static OPLUS_ATTR(oplus_brightness, S_IRUGO|S_IWUSR, oplus_display_get_brightness, oplus_display_set_brightness);
 static OPLUS_ATTR(oplus_max_brightness, S_IRUGO|S_IWUSR, oplus_display_get_max_brightness, NULL);
@@ -1542,6 +1550,7 @@ static OPLUS_ATTR(LCM_CABC, S_IRUGO|S_IWUSR, oplus_display_get_CABC, oplus_displ
 static OPLUS_ATTR(esd, S_IRUGO|S_IWUSR, oplus_display_get_ESD, oplus_display_set_ESD);
 static OPLUS_ATTR(sau_closebl_node, S_IRUGO|S_IWUSR, silence_show, silence_store);
 static OPLUS_ATTR(dsi_log_switch, S_IRUGO | S_IWUSR, oplus_display_get_dsi_log_switch, oplus_display_set_dsi_log_switch);
+static OPLUS_ATTR(fp_state, S_IRUGO, oplus_display_get_fp_state, NULL);
 static OPLUS_ATTR(trace_enable, S_IRUGO | S_IWUSR, oplus_display_get_trace_enable_attr, oplus_display_set_trace_enable_attr);
 /* #ifdef OPLUS_FEATURE_ONSCREENFINGERPRINT */
 static OPLUS_ATTR(fp_type, S_IRUGO | S_IWUSR, oplus_ofp_get_fp_type_attr, oplus_ofp_set_fp_type_attr);
@@ -1602,6 +1611,7 @@ static struct attribute *oplus_display_attrs[] = {
 	&oplus_attr_trace_enable.attr,
 /* #ifdef OPLUS_FEATURE_ONSCREENFINGERPRINT */
 	&oplus_attr_fp_type.attr,
+	&oplus_attr_fp_state.attr,
 	&oplus_attr_fake_aod.attr,
 	&oplus_attr_oplus_notify_fppress.attr,
 	&oplus_attr_hbm.attr,
@@ -1633,6 +1643,23 @@ static struct attribute_group oplus_display_attr_group = {
 	.attrs = oplus_display_attrs,
 };
 
+static int oplus_input_event_notify(struct notifier_block *self, unsigned long action, void *data) {
+	struct touchpanel_event *event = (struct touchpanel_event*)data;
+
+	if (event && action == EVENT_ACTION_FOR_FINGPRINT) {
+		fp_state.x = event->x;
+		fp_state.y = event->y;
+		fp_state.touch_state = event->touch_state;
+		sysfs_notify(kernel_kobj, "oplus_display", oplus_attr_fp_state.attr.name);
+	}
+
+	return NOTIFY_DONE;
+}
+
+struct notifier_block oplus_input_event_notifier = {
+	.notifier_call = oplus_input_event_notify,
+};
+
 int oplus_display_private_api_init(void)
 {
 	int retval;
@@ -1649,11 +1676,18 @@ int oplus_display_private_api_init(void)
 	if ((get_eng_version() == PREVERSION) || (get_eng_version() == PERFORMANCE))
 		g_trace_log = 1;
 
+	retval = touchpanel_event_register_notifier(&oplus_input_event_notifier);
+
+	if (retval) {
+		sysfs_remove_group(oplus_display_kobj, &oplus_display_attr_group);
+	}
+
 	return retval;
 }
 
 void oplus_display_private_api_exit(void)
 {
+	touchpanel_event_unregister_notifier(&oplus_input_event_notifier);
 	kobject_put(oplus_display_kobj);
 }
 
