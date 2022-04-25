@@ -784,7 +784,7 @@ static struct kbase_queue_group *get_bound_queue_group(
  * If the queue is already scheduled and resident, it will be started
  * right away, otherwise once the group is made resident.
  */
-static void pending_submission_worker(struct work_struct *work)
+static void pending_submission_worker(struct kthread_work *work)
 {
 	struct kbase_context *kctx =
 		container_of(work, struct kbase_context, csf.pending_submission_work);
@@ -899,7 +899,7 @@ void kbase_csf_ring_cs_kernel_doorbell(struct kbase_device *kbdev,
 
 static void enqueue_gpu_submission_work(struct kbase_context *const kctx)
 {
-	queue_work(system_highpri_wq, &kctx->csf.pending_submission_work);
+	kthread_queue_work(&kctx->csf.pending_submission_worker, &kctx->csf.pending_submission_work);
 }
 
 int kbase_csf_queue_kick(struct kbase_context *kctx,
@@ -1693,6 +1693,19 @@ int kbase_csf_ctx_init(struct kbase_context *kctx)
 	kctx->csf.wq = alloc_workqueue("mali_kbase_csf_wq",
 					WQ_UNBOUND, 1);
 
+	kthread_init_worker(&kctx->csf.pending_submission_worker);
+	kctx->csf.pending_sub_worker_thread = kbase_create_realtime_thread(
+		kctx->kbdev,
+		kthread_worker_fn,
+		&kctx->csf.pending_submission_worker,
+		"mali_submit");
+
+	if (IS_ERR(kctx->csf.pending_sub_worker_thread)) {
+		dev_err(kctx->kbdev->dev, "error initializing pending submission worker thread");
+		destroy_workqueue(kctx->csf.wq);
+		return err;
+	}
+
 	if (likely(kctx->csf.wq)) {
 		err = kbase_csf_scheduler_context_init(kctx);
 
@@ -1704,7 +1717,7 @@ int kbase_csf_ctx_init(struct kbase_context *kctx)
 
 				if (likely(!err)) {
 					mutex_init(&kctx->csf.lock);
-					INIT_WORK(&kctx->csf.pending_submission_work,
+					kthread_init_work(&kctx->csf.pending_submission_work,
 						  pending_submission_worker);
 
 					err = kbasep_ctx_user_reg_page_mapping_init(
@@ -1810,7 +1823,7 @@ void kbase_csf_ctx_term(struct kbase_context *kctx)
 	else
 		reset_prevented = true;
 
-	cancel_work_sync(&kctx->csf.pending_submission_work);
+	kthread_cancel_work_sync(&kctx->csf.pending_submission_work);
 
 	mutex_lock(&kctx->csf.lock);
 
@@ -1877,7 +1890,11 @@ void kbase_csf_ctx_term(struct kbase_context *kctx)
 
 	mutex_unlock(&kctx->csf.lock);
 
+	kthread_flush_worker(&kctx->csf.pending_submission_worker);
+	kthread_stop(kctx->csf.pending_sub_worker_thread);
+
 	kbasep_ctx_user_reg_page_mapping_term(kctx);
+
 	kbase_csf_tiler_heap_context_term(kctx);
 	kbase_csf_kcpu_queue_context_term(kctx);
 	kbase_csf_scheduler_context_term(kctx);

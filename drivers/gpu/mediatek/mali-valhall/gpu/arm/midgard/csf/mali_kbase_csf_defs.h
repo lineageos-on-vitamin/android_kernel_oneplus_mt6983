@@ -713,7 +713,8 @@ struct kbase_csf_user_reg_context {
  *                    Link of fatal error is
  *                    &struct_kbase_csf_notification.link.
  *                    @event_lock needs to be held to access this list.
- * @pending_submission_work: Work item to process pending kicked GPU command queues.
+ * @pending_submission_worker: Worker for the pending submission work item
+ * @pending_sub_work_thread: task_struct for @pending_submission_worker
  * @cpu_queue:        CPU queue information. Only be available when DEBUG_FS
  *                    is enabled.
  * @user_reg:         Collective information to support mapping to USER Register page.
@@ -734,7 +735,9 @@ struct kbase_csf_context {
 	struct list_head link;
 	struct kbase_csf_scheduler_context sched;
 	struct list_head error_list;
-	struct work_struct pending_submission_work;
+	struct kthread_worker pending_submission_worker;
+	struct kthread_work pending_submission_work;
+	struct task_struct *pending_sub_worker_thread;
 #if IS_ENABLED(CONFIG_MALI_MTK_DEBUG)
 	struct kbase_csf_cpu_queue_context cpu_queue;
 #endif
