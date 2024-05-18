@@ -463,6 +463,14 @@ bool ged_dvfs_gpu_freq_commit(unsigned long ui32NewFreqID,
 				ged_opp_stat_step();
 		}
 
+#if defined(CONFIG_MTK_GPUFREQ_V2)
+		cur_freq = gpufreq_get_cur_freq(TARGET_GPU);
+		if (g_ged_gpueb_support && cur_freq != pre_freq) {
+			mtk_notify_gpu_freq_change(0, cur_freq);
+			pre_freq = cur_freq;
+		}
+#endif /* CONFIG_MTK_GPUFREQ_V2 */
+
 #if defined(MTK_GPU_EB_SUPPORT)
 		if (ged_is_fdvfs_support()
 			&& is_fb_dvfs_triggered && is_fdvfs_enable()) {
