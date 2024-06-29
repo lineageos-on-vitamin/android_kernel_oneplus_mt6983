@@ -415,8 +415,7 @@
 			swiotlb=noforce \
 			initcall_debug=1 transparent_hugepage=never \
 			allow_mismatched_32bit_el0 \
-			firmware_class.path=/vendor/firmware \
-			log_buf_len=2m";	//Fuchun.Liao 2021/10/15 modify log_buf size
+			log_buf_len=2m";
 			kaslr-seed = <0 0>;
 			atag,videolfb-fb_base_l = <0x7e605000>;
 			atag,videolfb-fb_base_h = <0x0>;
