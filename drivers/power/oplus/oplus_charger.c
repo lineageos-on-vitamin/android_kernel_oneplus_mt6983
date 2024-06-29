@@ -1117,7 +1117,7 @@ int oplus_battery_get_property(struct power_supply *psy, enum power_supply_prope
 			} else if (!chip->authenticate) {
 				val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
 			} else {
-				val->intval = chip->prop_status;
+				val->intval = (chip->prop_status == POWER_SUPPLY_STATUS_NOT_CHARGING) ? POWER_SUPPLY_STATUS_DISCHARGING : chip->prop_status;
 			}
 			if (oplus_wpc_get_online_status() || oplus_chg_is_wls_present())
 				pre_batt_status = val->intval;
@@ -10426,7 +10426,7 @@ static void oplus_chg_update_ui_soc(struct oplus_chg_chip *chip)
 		chip->keep_prop_status = chip->prop_status;
 	} else {
 		cnt = 0;
-		chip->prop_status = POWER_SUPPLY_STATUS_DISCHARGING;
+		chip->prop_status = POWER_SUPPLY_STATUS_NOT_CHARGING;
 		soc_up_count = 0;
 		allow_uisoc_down = false;
 		if (chip->smooth_soc <= chip->ui_soc || vbatt_too_low) {
