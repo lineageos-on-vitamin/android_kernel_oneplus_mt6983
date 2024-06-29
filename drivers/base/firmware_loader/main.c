@@ -471,6 +471,8 @@ static const char * const fw_path[] = {
     "/odm/etc/wifi/",
     // #endif /* OPLUS_FEATURE_WIFI_FTM */
 	fw_path_para,
+	"/vendor/firmware/",
+	"/odm/firmware/",
 	"/odm/etc/wifi/",
 	"/lib/firmware/updates/" UTS_RELEASE,
 	"/lib/firmware/updates",
