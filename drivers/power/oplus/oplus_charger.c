@@ -1145,7 +1145,7 @@ int oplus_battery_get_property(struct power_supply *psy, enum power_supply_prope
 		val->intval = chip->batt_exist;
 		break;
 	case POWER_SUPPLY_PROP_TECHNOLOGY:
-		val->intval = POWER_SUPPLY_TECHNOLOGY_LION;
+		val->intval = POWER_SUPPLY_TECHNOLOGY_LIPO;
 		break;
 	case POWER_SUPPLY_PROP_CAPACITY:
 		if (chip->vooc_show_ui_soc_decimal == true && chip->decimal_control) {
