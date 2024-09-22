@@ -2,6 +2,7 @@ KERNEL_DIR=kernel-5.10
 
 . ${ROOT_DIR}/${KERNEL_DIR}/build.config.common
 . ${ROOT_DIR}/${KERNEL_DIR}/build.config.aarch64
+. ${ROOT_DIR}/${KERNEL_DIR}/build.config.lto_thin
 
 # SKIP_MRPROPER=1
 DEFCONFIG=oplus6983_defconfig
