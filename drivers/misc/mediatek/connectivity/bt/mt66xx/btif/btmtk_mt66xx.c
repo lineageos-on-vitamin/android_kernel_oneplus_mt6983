@@ -1075,7 +1075,7 @@ int32_t btmtk_intcmd_wmt_send_antenna_cmd(struct hci_dev *hdev)
         char str[32];
 
         dev_prj = get_project();
-        if (dev_prj != 0) {
+        if (dev_prj == 22021 || dev_prj == 22221) {
             sprintf(str, "BT_FW_%d.cfg",dev_prj);
             BTMTK_INFO("%s: try to load [%s]  ", __func__, str);
             if (btmtk_load_code_from_bin(&p_img, str, NULL, &len, 2) == -1) {
