@@ -26,15 +26,6 @@
 #include "ged_hashtable.h"
 #include "ged_sysfs.h"
 
-//Use tracing_is_on() to determine whether to print 5566 processes.
-#ifndef OPLUS_ARCH_EXTENDS
-#define OPLUS_ARCH_EXTENDS
-#endif
-//Use tracing_is_on() to determine whether to print 5566 processes.
-#ifdef OPLUS_ARCH_EXTENDS
-#include "../../../../../kernel/trace/trace.h"
-#endif
-
 enum {
 	/* 0x00 - 0xff reserved for internal buffer type */
 
@@ -1514,12 +1505,7 @@ void ged_log_perf_trace_counter(char *name, long long count, int pid,
 	char buf[256];
 	int cx;
 
-//Use tracing_is_on() to determine whether to print 5566 processes.
-#ifdef OPLUS_ARCH_EXTENDS
-        if (tracing_is_on()) {
-#else
-        if (ged_log_perf_trace_enable) {
-#endif
+    if (ged_log_perf_trace_enable) {
 		cx = snprintf(buf, sizeof(buf), "C|%d|%s|%lld|%llu|%lu\n",
 		pid, name, count, (unsigned long long)BQID, frameID);
 		if (cx >= 0 && cx < sizeof(buf))
