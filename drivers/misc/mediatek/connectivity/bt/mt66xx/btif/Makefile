@@ -51,14 +51,7 @@ ccflags-y += -D CHIP_IF_BTIF
 ccflags-y += -D USE_DEVICE_NODE=1
 
 # Customized fw update feature
-#ifndef OPLUS_FEATURE_BT_FW_SAU_MTK
-#Add for fw sau
-#ccflags-y += -D CUSTOMER_FW_UPDATE=0
-
-#else /* OPLUS_FEATURE_BT_FW_SAU_MTK */
-ccflags-y += -D CUSTOMER_FW_UPDATE=1
-ccflags-y += -D OPLUS_FEATURE_BT_FW_SAU_MTK=1
-#endif /* OPLUS_FEATURE_BT_FW_SAU_MTK */
+ccflags-y += -D CUSTOMER_FW_UPDATE=0
 
 # pm_qos control
 ccflags-y += -D PM_QOS_CONTROL=0
