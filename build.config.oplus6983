@@ -9,18 +9,34 @@ DEFCONFIG=oplus6983_defconfig
 PRE_DEFCONFIG_CMDS="KCONFIG_CONFIG=${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/${DEFCONFIG} ${ROOT_DIR}/${KERNEL_DIR}/scripts/kconfig/merge_config.sh -m -r ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/gki_defconfig ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/mgk_64_k510_defconfig ${ROOT_DIR}/${KERNEL_DIR}/kernel/configs/oplus6983.config"
 POST_DEFCONFIG_CMDS="rm ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/${DEFCONFIG}"
 
-# Need to run manually the command below
+# Need to run manually the commands below
+# ${ROOT_DIR}/prebuilts/misc/linux-x86/libufdt/mkdtimg cfg_create ${ROOT_DIR}/out/${BRANCH}/dist/dtbo.img ${ROOT_DIR}/out/${BRANCH}/dist/dtboimg.cfg
+# python ${ROOT_DIR}/append_certs.py --alignment 16 --cert1 ${ROOT_DIR}/security/cert1.bin --cert2 ${ROOT_DIR}/security/cert2.bin --dtbo ${ROOT_DIR}/out/${BRANCH}/dist/dtbo.img
 # find ${ROOT_DIR}/out/${BRANCH}/dist -type f -name *.ko -exec ${ROOT_DIR}/${CLANG_PREBUILT_BIN}/${OBJCOPY} --strip-debug {} \;
 
 MAKE_GOALS="
 Image.gz
 modules
 mediatek/mt6983.dtb
+mediatek/k6983v1_64.dtbo
+mediatek/oplus6983_21007.dtbo
+mediatek/oplus6983_22021.dtbo
+mediatek/oplus6983_22021_EVB.dtbo
+mediatek/oplus6983_22823.dtbo
+mediatek/oplus6983_22921.dtbo
+dtboimg.cfg
 "
 
 FILES="
 arch/arm64/boot/Image.gz
 arch/arm64/boot/dts/mediatek/mt6983.dtb
+arch/arm64/boot/dts/mediatek/k6983v1_64.dtbo
+arch/arm64/boot/dts/mediatek/oplus6983_21007.dtbo
+arch/arm64/boot/dts/mediatek/oplus6983_22021.dtbo
+arch/arm64/boot/dts/mediatek/oplus6983_22021_EVB.dtbo
+arch/arm64/boot/dts/mediatek/oplus6983_22823.dtbo
+arch/arm64/boot/dts/mediatek/oplus6983_22921.dtbo
+dtboimg.cfg
 vmlinux
 System.map
 vmlinux.symvers
