@@ -162,6 +162,7 @@ ifndef KBUILD_MIXED_TREE
 all:	Image.gz
 endif
 
+include $(srctree)/scripts/dtboimg/dtboimgcfg.mk
 
 Image: vmlinux
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
