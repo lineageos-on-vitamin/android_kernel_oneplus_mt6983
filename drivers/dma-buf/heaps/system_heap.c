@@ -35,10 +35,6 @@
 #include "mtk_heap_priv.h"
 #include "mtk_heap.h"
 
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-#include "../../../mm/chp_ext.h"
-#endif
-
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_MM_BOOSTPOOL)
 #include "mm_boost_pool/oplus_boost_pool_mtk.h"
 #include "mm_boost_pool/trace_dma_buf.h"
@@ -563,13 +559,6 @@ static void system_heap_buf_free(struct deferred_freelist_item *item,
 	for_each_sgtable_sg(table, sg, i) {
 		struct page *page = sg_page(sg);
 
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-		/*refill hugepage, if the page is alloc from hugepage pool*/
-		if(unlikely(is_chp_ext_pages(page, compound_order(page)))){
-			put_page(page);
-			continue;
-		}
-#endif
 		if (reason == DF_UNDER_PRESSURE) {
 			__free_pages(page, compound_order(page));
 		} else {
@@ -908,20 +897,12 @@ free_pages:
 	for_each_sgtable_sg(table, sg, i) {
 		struct page *p = sg_page(sg);
 
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-		__free_pages_ext(p, compound_order(p));
-#else
 		__free_pages(p, compound_order(p));
-#endif
 	}
 	sg_free_table(table);
 free_buffer:
 	list_for_each_entry_safe(page, tmp_page, &pages, lru) {
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-		__free_pages_ext(page, compound_order(page));
-#else
 		__free_pages(page, compound_order(page));
-#endif
 	}
 	kfree(buffer);
 	return ERR_PTR(ret);

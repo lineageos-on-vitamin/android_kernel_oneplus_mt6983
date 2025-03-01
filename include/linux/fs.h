@@ -480,11 +480,7 @@ struct address_space {
 	 * android common kernel disabled CONFIG_READ_ONLY_THP_FOR_FS but we need nr_thps
 	 * avoiding modifying the data struct, we re-use reserved field for it
 	 */
-#if !defined(CONFIG_READ_ONLY_THP_FOR_FS) && defined(CONFIG_CONT_PTE_HUGEPAGE)
-	ANDROID_KABI_USE(1, atomic_t nr_thps);
-#else
 	ANDROID_KABI_RESERVE(1);
-#endif
 	ANDROID_KABI_RESERVE(2);
 	ANDROID_KABI_RESERVE(3);
 	ANDROID_KABI_RESERVE(4);

@@ -308,9 +308,6 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
 		goto out;
 
 	page = migration_entry_to_page(entry);
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-	CHP_BUG_ON(PageCont(page));
-#endif
 	page = compound_head(page);
 
 	/*
@@ -1043,11 +1040,6 @@ static int __unmap_and_move(struct page *page, struct page *newpage,
 
 		lock_page(page);
 	}
-
-	/* for debugging, detect the migration of subpages */
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-	CHP_BUG_ON(PageCont(page));
-#endif
 
 	if (PageWriteback(page)) {
 		/*

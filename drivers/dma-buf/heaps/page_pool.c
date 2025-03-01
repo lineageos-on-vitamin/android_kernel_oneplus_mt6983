@@ -16,10 +16,6 @@
 #include <linux/sched/signal.h>
 #include "page_pool.h"
 
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-#include "../../../mm/chp_ext.h"
-#endif
-
 struct dmabuf_page_pool_with_spinlock {
 	struct dmabuf_page_pool pool;
 	struct spinlock spinlock;
@@ -39,11 +35,7 @@ struct page *dmabuf_page_pool_alloc_pages(struct dmabuf_page_pool *pool)
 static inline void dmabuf_page_pool_free_pages(struct dmabuf_page_pool *pool,
 					       struct page *page)
 {
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-	__free_pages_ext(page, pool->order);
-#else
 	__free_pages(page, pool->order);
-#endif
 }
 
 static void dmabuf_page_pool_add(struct dmabuf_page_pool *pool, struct page *page)
@@ -107,17 +99,8 @@ struct page *dmabuf_page_pool_alloc(struct dmabuf_page_pool *pool)
 
 	page = dmabuf_page_pool_fetch(pool);
 
-	if (!page) {
-#ifdef CONFIG_CONT_PTE_HUGEPAGE
-		/*try get page from hugepage pool when order is HPAGE_CONT_PTE_ORDER*/
-		if (pool->order == HPAGE_CONT_PTE_ORDER)
-			page = alloc_chp_ext_wrapper(pool->gfp_mask, CHP_EXT_DMABUF);
-		else
-			page = dmabuf_page_pool_alloc_pages(pool);
-#else
+	if (!page)
 		page = dmabuf_page_pool_alloc_pages(pool);
-#endif
-	}
 	return page;
 }
 EXPORT_SYMBOL_GPL(dmabuf_page_pool_alloc);
