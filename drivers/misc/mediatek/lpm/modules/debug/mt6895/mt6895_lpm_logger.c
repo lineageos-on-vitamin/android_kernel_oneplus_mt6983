@@ -24,10 +24,6 @@
 #include <mtk_lpm_sysfs.h>
 #include <mt6895_cond.h>
 
-#ifdef CONFIG_OPLUS_POWERINFO_STANDBY_DEBUG
-#include <linux/proc_fs.h>
-#endif
-
 #define MT6895_LOG_DEFAULT_MS		5000
 
 #define PCM_32K_TICKS_PER_SEC		(32768)
@@ -427,49 +423,6 @@ static u32 is_blocked_cnt;
 	pr_info("[name:spm&][SPM] %s\n", log_buf);
 }
 
-#ifdef CONFIG_OPLUS_POWERINFO_STANDBY_DEBUG
-static char lpm_message[1400] = {0};
-
-struct r13_blocker_detail_info {
-	u32 bitinfo;
-	char name[30];
-};
-
-struct r13_blocker_detail_info wakeup_r13_table[] = {
-	{R13_MD_SRCCLKENA_0,"R13_MD_SRCCLKENA_0"},
-	{R13_MD32_APSRC_REQ,"R13_MD32_APSRC_REQ"},
-	{R13_MD_DDR_EN_0,"R13_MD_DDR_EN_0"},
-	{R13_CONN_DDR_EN,"R13_CONN_DDR_EN"},
-	{R13_MD_SRCCLKENA_1,"R13_MD_SRCCLKENA_1"},
-	{R13_MM_STATE,"R13_MM_STATE"},
-	{R13_MD32_STATE,"R13_MD32_STATE"},
-	{R13_MD1_STATE,"R13_MD1_STATE"},
-	{R13_CONN_STATE,"R13_CONN_STATE"},
-	{R13_CONN_SRCCKENA,"R13_CONN_SRCCKENA"},
-	{R13_CONN_APSRC_REQ,"R13_MD_SRCCLKENA_0"},
-	{R13_SCP_STATE,"R13_SCP_STATE"},
-	{R13_AUDIO_DSP_STATE,"R13_AUDIO_DSP_STATE"},
-	{R13_MD_VRF18_REQ_0,"R13_MD_VRF18_REQ_0"},
-	{R13_DDR_EN_STATE,"R13_DDR_EN_STATE"},
-};
-int wakeup_r13_table_size = sizeof(wakeup_r13_table)/sizeof(wakeup_r13_table[0]);
-void record_suspend_r13_info(u32 r13)
-{
-	int i = 0;
-
-	//r13 = r13 & (~((u32)R13_IGNORE_BIT));
-	strcat(lpm_message, "r13_set_bit=");
-	for(i= 0; i< wakeup_r13_table_size; i++) {
-		if((r13 & wakeup_r13_table[i].bitinfo) != 0) {
-			strcat(lpm_message, wakeup_r13_table[i].name);
-			strcat(lpm_message, " ");
-		}
-	}
-	strcat(lpm_message, "\n");
-	return;
-}
-#endif
-
 static int lpm_show_message(int type, const char *prefix, void *data)
 {
 	struct lpm_spm_wake_status *wakesrc = mt6895_log_help.wakesrc;
@@ -714,13 +667,6 @@ static int lpm_show_message(int type, const char *prefix, void *data)
 				plat_mmio_read(SYS_TIMER_VALUE_H),
 				spm_26M_off_pct);
 		}
-#ifdef CONFIG_OPLUS_POWERINFO_STANDBY_DEBUG
-		if(!strcmp(scenario,"suspend")) {
-			memset(lpm_message, 0, sizeof(lpm_message));
-			strcpy(lpm_message,log_buf);
-			record_suspend_r13_info(wakesrc->r13);
-		}
-#endif
 	}
 	WARN_ON(log_size >= LOG_BUF_OUT_SZ);
 
@@ -743,27 +689,6 @@ end:
 	return wr;
 }
 
-#ifdef CONFIG_OPLUS_POWERINFO_STANDBY_DEBUG
-static int lpm_message_show(struct seq_file *s, void *v)
-{
-
-	seq_printf(s, "%s", lpm_message);
-	return 0;
-}
-
-static int lpm_message_open(struct inode *inode, struct file *file)
-{
-	return single_open(file, lpm_message_show, NULL);
-}
-
-static const struct proc_ops lpm_message_fops = {
-	.proc_open		= lpm_message_open,
-	.proc_read		= seq_read,
-	.proc_lseek		= seq_lseek,
-	.proc_release	= seq_release,
-};
-#endif
-
 static struct lpm_dbg_plat_ops mt6895_dbg_ops = {
 	.lpm_show_message = lpm_show_message,
 	.lpm_save_sleep_info = lpm_save_sleep_info,
@@ -776,8 +701,6 @@ int mt6895_dbg_ops_register(void)
 	int ret;
 
 	ret = lpm_dbg_plat_ops_register(&mt6895_dbg_ops);
-#ifdef CONFIG_OPLUS_POWERINFO_STANDBY_DEBUG
-	proc_create("lpm_message", 0444, NULL, &lpm_message_fops);
-#endif
+
 	return ret;
 }

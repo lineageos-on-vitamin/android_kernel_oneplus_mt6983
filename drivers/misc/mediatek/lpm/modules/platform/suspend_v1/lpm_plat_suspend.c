@@ -49,7 +49,6 @@ static DEFINE_SPINLOCK(lpm_abort_locker);
 static struct pm_qos_request lpm_qos_request;
 
 #define S2IDLE_STATE_NAME "s2idle"
-#if !IS_ENABLED(CONFIG_OPLUS_POWERINFO_STANDBY_DEBUG)
 #if IS_ENABLED(CONFIG_MTK_ECCCI_DRIVER)
 u32 *share_mem;
 struct md_sleep_status before_md_sleep_status;
@@ -180,7 +179,7 @@ static void log_md_sleep_info(void)
 	}
 }
 #endif
-#endif
+
 static inline int lpm_suspend_common_enter(unsigned int *susp_status)
 {
 	unsigned int status = PLAT_VCORE_LP_MODE
@@ -279,9 +278,7 @@ void lpm_suspend_s2idle_reflect(int cpu,
 #if IS_ENABLED(CONFIG_MTK_ECCCI_DRIVER)
 		/* show md sleep status */
 		get_md_sleep_time(&after_md_sleep_status);
-#if !IS_ENABLED(CONFIG_OPLUS_POWERINFO_STANDBY_DEBUG)
 		log_md_sleep_info();
-#endif
 #endif
 		__lpm_suspend_reflect(LPM_SUSPEND_S2IDLE,
 					 cpu, issuer);
@@ -545,9 +542,7 @@ int __init lpm_model_suspend_init(void)
 
 	cpumask_clear(&s2idle_cpumask);
 
-#if !IS_ENABLED(CONFIG_OPLUS_POWERINFO_STANDBY_DEBUG)
 	get_md_sleep_time_addr();
-#endif
 #if IS_ENABLED(CONFIG_PM)
 	ret = register_pm_notifier(&lpm_spm_suspend_pm_notifier_func);
 	if (ret) {
