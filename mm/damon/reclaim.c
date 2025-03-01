@@ -80,16 +80,6 @@ unsigned long quota_reset_interval_ms __read_mostly = 1000;
 module_param(quota_reset_interval_ms, ulong, 0664);
 
 /*
- * The watermarks metric
- * 0 = DAMOS_WMARK_NONE           // always
- * 1 = DAMOS_WMARK_FREE_MEM_RATE  // usually
- * 2 = DAMOS_WMARK_OPLUS          // often
- * 3 = DAMOS_WMARK_SLEEP          // never
- */
-int wmarks_metric __read_mostly = 2;
-module_param(wmarks_metric, int, 0664);
-
-/*
  * The watermarks check time interval in microseconds.
  *
  * Minimal time to wait before checking the watermarks, when DAMON_RECLAIM is
@@ -274,7 +264,7 @@ static bool get_monitoring_region(unsigned long *start, unsigned long *end)
 static struct damos *damon_reclaim_new_scheme(void)
 {
 	struct damos_watermarks wmarks = {
-		.metric = wmarks_metric,
+		.metric = DAMOS_WMARK_FREE_MEM_RATE,
 		.interval = wmarks_interval,
 		.high = wmarks_high,
 		.mid = wmarks_mid,
