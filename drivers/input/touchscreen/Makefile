@@ -113,7 +113,6 @@ obj-$(CONFIG_TOUCHSCREEN_RASPBERRYPI_FW)	+= raspberrypi-ts.o
 obj-$(CONFIG_TOUCHSCREEN_IQS5XX)	+= iqs5xx.o
 obj-$(CONFIG_TOUCHPANEL_CUSTOM) += touch_custom/
 obj-$(CONFIG_TOUCHPANEL_OPLUS) += oplus_touchscreen_v2/
-obj-$(CONFIG_TOUCHPANEL_OPLUS) += tp_hbp/
 obj-$(CONFIG_TOUCHSCREEN_ZINITIX)	+= zinitix.o
 obj-$(CONFIG_TOUCHSCREEN_HIMAX_CHIPSET) += hxchipset/
 obj-$(CONFIG_TOUCHSCREEN_GOODIX_BRL)   += GT9966/

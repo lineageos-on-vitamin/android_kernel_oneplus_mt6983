@@ -213,6 +213,7 @@ source "drivers/input/hall/Kconfig"
 #ifdef OPLUS_FEATURE_FINGERPRINT
 source "drivers/input/fp_drivers/Kconfig"
 source "drivers/input/uff_fp_drivers/Kconfig"
+source "drivers/input/oplus_secure_common/Kconfig"
 #endif /* OPLUS_FEATURE_FINGERPRINT */
 
 endmenu

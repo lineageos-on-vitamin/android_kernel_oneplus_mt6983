@@ -35,7 +35,7 @@
 #include "mtk_drm_trace.h"
 #include <linux/leds-mtk.h>
 #endif /* OPLUS_FEATURE_DISPLAY_APOLLO */
-#include "../../../../vendor/oplus/kernel/touchpanel/oplus_touchscreen_v2/touchpanel_notify/touchpanel_event_notify.h"
+#include "../../../input/touchscreen/oplus_touchscreen_v2/touchpanel_notify/touchpanel_event_notify.h"
 
 /*
  * we will create a sysfs which called /sys/kernel/oplus_display,

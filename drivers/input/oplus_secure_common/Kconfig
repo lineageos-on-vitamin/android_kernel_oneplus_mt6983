@@ -1,0 +1,4 @@
+### secure common config
+config OPLUS_SECURE_COMMON
+       default n
+       tristate "Secure common"

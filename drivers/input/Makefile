@@ -34,5 +34,6 @@ obj-y += hall/
 #ifdef OPLUS_FEATURE_FINGERPRINT
 obj-$(CONFIG_OPLUS_FINGERPRINT)  += fp_drivers/
 obj-$(CONFIG_UFF_FINGERPRINT)  += uff_fp_drivers/
+obj-$(CONFIG_OPLUS_SECURE_COMMON) += oplus_secure_common/
 #endif /* OPLUS_FEATURE_FINGERPRINT */
 

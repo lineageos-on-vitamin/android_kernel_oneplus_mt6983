@@ -56,8 +56,6 @@ MTK_WLAN_SERVICE=yes
 WIFI_IP_SET=1
 WLAN_CHIP_ID=6983
 
-CHIPSET_COMPANY=MTK
-
 EXT_MODULES+="
 vendor/mediatek/kernel_modules/connectivity/connfem
 vendor/mediatek/kernel_modules/connectivity/conninfra
@@ -70,8 +68,4 @@ vendor/mediatek/kernel_modules/connectivity/wlan/adaptor
 vendor/mediatek/kernel_modules/connectivity/wlan/core/gen4m
 vendor/mediatek/kernel_modules/gpu
 vendor/mediatek/kernel_modules/met_drv_v3
-vendor/oplus/kernel/cpu/thermal/horae_shell_temp
-vendor/oplus/secure/common/bsp/drivers/oplus_secure_common
-vendor/oplus/kernel/nfc/sn_nci/nfc
-vendor/oplus/kernel/nfc/sn_nci/ese
 "

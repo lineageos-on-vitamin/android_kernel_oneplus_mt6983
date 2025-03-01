@@ -1387,6 +1387,5 @@ config TOUCHSCREEN_HIMAX_CHIPSET
 source "drivers/input/touchscreen/hxchipset/Kconfig"
 source "drivers/input/touchscreen/GT9966/Kconfig"
 source "drivers/input/touchscreen/synaptics_hbp/Kconfig"
-source "drivers/input/touchscreen/tp_hbp/Kconfig"
 endif
 
