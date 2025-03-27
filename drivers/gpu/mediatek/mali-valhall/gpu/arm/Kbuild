@@ -18,4 +18,4 @@
 #
 #
 
-obj-$(CONFIG_MALI_MIDGARD) += midgard/
+obj-y += midgard/

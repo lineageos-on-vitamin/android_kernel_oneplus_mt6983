@@ -156,3 +156,5 @@ config MTK_GPU_MT6765_SUPPORT
 	  Set Y or M to select this feature for specific platform-mt6765,
 	  and set N to disable.
 	  It is additional config to separate platforms.
+
+source "drivers/gpu/mediatek/mali-valhall/base/arm/Kconfig"

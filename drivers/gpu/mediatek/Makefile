@@ -41,7 +41,7 @@ ifneq ($(CONFIG_MTK_GPU_SUPPORT),)
     obj-y += ged/
     obj-y += hal/
     obj-y += gpufreq/
-
+    obj-y += mali-valhall/
 
 ifneq ($(CONFIG_MTK_GPU_VERSION),"")
 # GPU R5P0
