@@ -14,11 +14,10 @@
 $(warning build in gps_dl)
 ifeq ($(CONFIG_MTK_GPS_SUPPORT), y)
 
-ifeq ($(AUTOCONF_H),)
-    $(error AUTOCONF_H is not defined)
+ifneq ($(KERNEL_OUT),)
+    ccflags-y += -imacros $(KERNEL_OUT)/include/generated/autoconf.h
 endif
 
-ccflags-y += -imacros $(AUTOCONF_H)
 ifndef TOP
     TOP := $(srctree)/..
 endif
@@ -66,14 +65,14 @@ obj-m += $(MODULE_NAME).o
 
 GPS_DRV_CONTROL_LNA := n
 GPS_DL_HAS_MOCK := n
-GPS_SRC_FOLDER := $(TOP)/vendor/mediatek/kernel_modules/connectivity/gps/data_link
+GPS_SRC_FOLDER := $(srctree)/drivers/misc/mediatek/connectivity/gps/data_link
 ccflags-y += -DMTK_GENERIC_HAL
 
 ccflags-y += -I$(GPS_SRC_FOLDER)/plat/$(GPS_PLATFORM)
 ccflags-y += -I$(GPS_SRC_FOLDER)/plat/$(GPS_PLATFORM)/inc
 ccflags-y += -I$(GPS_SRC_FOLDER)/plat/$(GPS_PLATFORM)/hw/inc
 
-CONNINFRA_SRC_FOLDER := $(TOP)/vendor/mediatek/kernel_modules/connectivity/conninfra
+CONNINFRA_SRC_FOLDER := $(srctree)/drivers/misc/mediatek/connectivity/conninfra
 ccflags-y += -I$(CONNINFRA_SRC_FOLDER)/include
 ccflags-y += -I$(CONNINFRA_SRC_FOLDER)/debug_utility/metlog
 ccflags-y += -DGPS_DL_HAS_CONNINFRA_DRV=1

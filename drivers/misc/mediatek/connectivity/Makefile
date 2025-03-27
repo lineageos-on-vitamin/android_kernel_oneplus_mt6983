@@ -70,6 +70,30 @@ ifneq ($(KERNELRELEASE),)
     ifeq ($(CONFIG_MTK_COMBO), y)
         ccflags-y += -D CFG_CONNADP_BUILD_IN
     endif
+
+    export TARGET_BUILD_VARIANT=user
+
+    export BT_PLATFORM=6983
+    export LOG_TAG=[BT_Drv][btif]
+
+    export BUILD_CONNAC2=true
+    export CFG_BUILD_CONNAC2=true
+    export CFG_FM_CHIP=mt6635
+    export CFG_FM_PLAT=connac2x
+    export FM_CHIP=mt6635
+    export FM_PLAT=connac2x
+
+    export GPS_PLATFORM=v050
+
+    export CONFIG_MTK_COMBO_WIFI_HIF=axi
+    export CONNAC_VER=2_0
+    export MTK_ANDROID_EMI=y
+    export MTK_ANDROID_WMT=y
+    export MTK_COMBO_CHIP=CONNAC2X2_SOC7_0
+    export MTK_WLAN_SERVICE=yes
+    export WIFI_IP_SET=1
+    export WLAN_CHIP_ID=6983
+
     # Do build-in for Makefile checking
     # export CONFIG_WLAN_DRV_BUILD_IN=y
 
@@ -118,6 +142,16 @@ ifneq ($(KERNELRELEASE),)
         obj-y += wmt_chrdev_wifi/
         obj-y += wlan_drv_gen4m/
     endif
+
+    obj-$(CONFIG_MTK_COMBO) += connfem/
+    obj-$(CONFIG_MTK_COMBO) += conninfra/
+    obj-$(CONFIG_MTK_BTIF) += bt/mt66xx/btif/
+    obj-$(CONFIG_MTK_FMRADIO) += fmradio/
+    obj-$(CONFIG_MTK_COMBO_GPS) += gps/data_link/
+    obj-$(CONFIG_MTK_COMBO_GPS) += gps/gps_pwr/
+    obj-$(CONFIG_MTK_COMBO_GPS) += gps/gps_scp/
+    obj-$(CONFIG_MTK_COMBO_WIFI) += wlan/adaptor/
+    obj-$(CONFIG_MTK_COMBO_CHIP_CONSYS_6983) += wlan/core/gen4m/
 
 # Otherwise we were called directly from the command line;
 # invoke the kernel build system.
