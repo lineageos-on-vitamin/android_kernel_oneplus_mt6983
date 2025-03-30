@@ -26,6 +26,13 @@ menuconfig MALI_BASE_MODULES
 	  Those modules provide extra features or debug interfaces and,
 	  are optional for the use of the Mali GPU modules.
 
+config MALI_CSF_SUPPORT
+	bool "Enable Mali CSF based GPU support"
+	depends on MALI_BASE_MODULES
+	default y
+	help
+	  Enables support for CSF based GPUs.
+
 config DMA_SHARED_BUFFER_TEST_EXPORTER
 	bool "Build dma-buf framework test exporter module"
 	depends on MALI_BASE_MODULES && DMA_SHARED_BUFFER
